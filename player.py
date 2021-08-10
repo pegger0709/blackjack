@@ -3,7 +3,32 @@ from hand import *
 
 
 class Player:
+    """
+    class Player represents a blackjack player.
+    
+    Attributes
+    ----------
+    bankroll: float
+        the amount of money the player has to play with
+    bet: float
+        the amount of money the player wagers on the current hand
+    hand: Hand object
+        the blackjack hand the player has been dealt
+        
+    Methods
+    -------
+    dealHand(hand)
+        deals out a blackjack hand to the player
+    playHand(bet, use_basic_strategy, verbose)
+        plays the dealt hand either on the fly or according to the predetermined basic strategy
+    """
     def __init__(self, bankroll=0):
+        """
+        Parameters
+        ----------
+        bankroll: float
+            the amount of money the player has to play with
+        """
         self.bankroll = bankroll
         self.hand = None
         self.bet = None
@@ -12,11 +37,39 @@ class Player:
         return 'Bankroll: %.1f dollars' % self.bankroll
         
     def dealHand(self, hand=None):
+        """
+        Provides the player with an initial hand
+        
+        Parameters
+        ----------
+        hand: Hand object
+            The blackjack hand to be dealt (default None). If None, then a random hand is dealt.
+            
+        Returns
+        -------
+        None
+        """
         if hand is None: 
             hand = Hand()
         self.hand = hand
     
     def playHand(self, bet=0, use_basic_strategy=True, verbose=False):
+        """
+        Plays the hand either automatically using the basic strategy or based on user input.
+        
+        Parameters
+        ----------
+        bet: float
+            The amount of money wagered on this hand
+        use_basic_strategy: bool
+            If True, play is done automatically according to basic strategy. If False, user will be asked which action to take at each decision point
+        verbose: bool
+            If True, print detailed information about the hand's outcome to the console. Otherwise, print only the bare necessities
+            
+        Returns
+        -------
+        None
+        """
         if bet > self.bankroll: pass
         else:
             dealerHand = Hand()
