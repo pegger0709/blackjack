@@ -41,14 +41,49 @@ class Player:
         return 'Bankroll: %.1f dollars' % self.bankroll
     
     def finish(self, hand, bet):
+        """
+        Stores the hand and bet in memory, no longer to be touched until it is time to settle accounts
+        
+        Parameters
+        ----------
+        hand: Hand object
+        bet: float
+        
+        Returns
+        -------
+        None
+        """
         self.hands.append(hand)
         self.bets.append(bet)
     
     def resetBoard(self):
+        """
+        Resets the board in preparation for the next round of play
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        """
         self.hands = []
         self.bets = []
         
     def addToBankroll(self, amount=0):
+        """
+        Adjusts the bankroll following a win or loss
+        
+        Parameters
+        ----------
+        amount: float
+            amount by which to adjust the bankroll (default 0)
+        
+        Returns
+        -------
+        None
+        """
         self.bankroll += amount
            
     def playHand(self, playerHand, dealerUpCard, bet=0, useBasicStrategy=True):
@@ -134,12 +169,35 @@ class Dealer:
         self.hand = None
         
     def dealHand(self, hand=None):
+        """
+        Gives the dealer a given hand
+        
+        Parameters
+        ----------
+        hand: Hand object
+            hand to give the dealer
+            
+        Returns
+        -------
+        None
+        """
         if hand is None:
             self.hand = Hand()
         else:
             self.hand = hand
             
     def playHand(self):
+        """
+        Makes the dealer play the hand according to the rules (hits soft 17)
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        """
         finishedHand = False
         while not finishedHand:
             if self.hand.isBlackjack():
@@ -154,6 +212,17 @@ class Dealer:
                 self.hand.addCard()
                 
     def payoutToPlayer(self, playerHand, playerBet):
+        """
+        Determines how much a player wins or loses on a bet
+        
+        Parameters
+        ----------
+        playerHand: Hand object
+        playerBet: float
+        
+        Returns:
+        payout: float
+        """
         if playerHand.isBust(): return -playerBet
         else:
             if self.hand.isBust(): 
@@ -168,6 +237,17 @@ class Dealer:
                 return 0
             
     def settlePlayer(self, player):
+        """
+        Settles accounts with the player and clears board for the next round of play
+        
+        Parameters
+        ----------
+        player: Player object
+        
+        Returns
+        -------
+        None
+        """
         n_hands = len(player.hands)
         for i in range(n_hands):
             playerHand = player.hands[i]
