@@ -45,5 +45,5 @@ BASIC_STRATEGY = pd.DataFrame(
     ['s','s','s','s','s','s','s','s','s','s'],#pair of T
     ['p','p','p','p','p','p','p','p','p','p'],#pair of A
     ]
-).replace({'p':'h'}) #todo: deal with splitting pairs
+)
 
