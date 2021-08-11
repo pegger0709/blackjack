@@ -17,6 +17,8 @@ class Card:
         determines whether a card is both an ace and worth 11 points
     hardenAce()
         turns an ace worth 11 points into an ace worth 1 point
+    softenAce()
+        turns an ace worth 1 points into an ace worth 11 point
     """
     def __init__(self, face_value=None):
         """
@@ -75,8 +77,23 @@ class Card:
         """
         if self.isSoftAce():
             self.numeric_value = 1
-        else:
-            pass
+
+            
+    def softenAce(self):
+        """
+        Turns a hard ace (1 points) into a soft ace (11 point)
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        """
+        if ~self.isSoftAce():
+            self.numeric_value = 11
+
 
 class Hand:
     """

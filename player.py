@@ -86,7 +86,7 @@ class Player:
         """
         self.bankroll += amount
            
-    def playHand(self, playerHand, dealerUpCard, bet=0, useBasicStrategy=True):
+    def playHand(self, playerHand, dealerUpCard, bet=0, useBasicStrategy=True, verbose=False):
         """
         Plays the hand either automatically using the basic strategy or based on user input.
         
@@ -100,19 +100,22 @@ class Player:
             The amount of money wagered on this hand
         useBasicStrategy: bool
             If True, play is done automatically according to basic strategy. If False, user will be asked which action to take at each decision point
+        verbose: bool
             
         Returns
         -------
         None
         """
         if bet > self.bankroll: pass
-        print('Dealer up card: ' + dealerUpCard.face_value)
-        print(playerHand)
-        if playerHand.isBlackjack():
-            self.finish(playerHand, bet)
-            pass
+        if verbose:
+            print('Dealer up card: ' + dealerUpCard.face_value)
+            print(playerHand)
+        
         while True:
             if playerHand.isBust():
+                self.finish(playerHand, bet)
+                break
+            if playerHand.isBlackjack():
                 self.finish(playerHand, bet)
                 break
 
@@ -136,10 +139,14 @@ class Player:
                 break
             elif choice=='p':
                 if playerHand.isPair():
-                    print('split')
-                    leftSplitHand = Hand([playerHand.cards[0], Card()], is_original_hand=False)
+                    if verbose: print('split')
+                    leftSplitCard = playerHand.cards[0]
+                    leftSplitCard.softenAce()
+                    leftSplitHand = Hand([leftSplitCard, Card()], is_original_hand=False)
                     self.playHand(leftSplitHand, dealerUpCard, bet, useBasicStrategy)
-                    rightSplitHand = Hand([playerHand.cards[1], Card()], is_original_hand=False)
+                    rightSplitCard = playerHand.cards[1]
+                    rightSplitCard.softenAce()
+                    rightSplitHand = Hand([rightSplitCard, Card()], is_original_hand=False)
                     self.playHand(rightSplitHand, dealerUpCard, bet, useBasicStrategy)
                     break
             else:
@@ -206,7 +213,7 @@ class Dealer:
                 finishedHand = True
             elif self.hand.value > 17:
                 finishedHand = True
-            elif self.hand.value == 17 and not dealerHand.isSoftHand():
+            elif self.hand.value == 17 and not self.hand.isSoftHand():
                 self.hand.addCard()
             else:
                 self.hand.addCard()
