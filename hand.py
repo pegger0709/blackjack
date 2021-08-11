@@ -75,7 +75,7 @@ class Card:
         -------
         None
         """
-        if self.isSoftAce():
+        if self.face_value=='A' and self.isSoftAce():
             self.numeric_value = 1
 
             
@@ -91,7 +91,7 @@ class Card:
         -------
         None
         """
-        if ~self.isSoftAce():
+        if self.face_value=='A' and ~self.isSoftAce():
             self.numeric_value = 11
 
 
