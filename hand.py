@@ -88,6 +88,8 @@ class Hand:
         the cards that make up the hand
     value: int
         the point value of the hand
+    is_original_hand: bool
+        whether the hand was the first dealt
         
     Methods
     -------

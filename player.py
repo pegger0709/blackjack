@@ -21,6 +21,8 @@ class Player:
         puts the hand in the player's list once the player has finished modifying the hand
     playHand(playerHand, dealerUpCard, bet, useBasicStrategy)
         plays the dealt hand either on the fly or according to basic strategy
+    addToBankroll(amount)
+        adds a player's winnings to (or deducts losses from) the bankroll
     resetBoard()
         gets rid of all hands and resets the board
     """
@@ -45,6 +47,9 @@ class Player:
     def resetBoard(self):
         self.hands = []
         self.bets = []
+        
+    def addToBankroll(self, amount=0):
+        self.bankroll += amount
            
     def playHand(self, playerHand, dealerUpCard, bet=0, useBasicStrategy=True):
         """
@@ -104,3 +109,70 @@ class Player:
                     break
             else:
                 pass
+                
+class Dealer:
+    """
+    class Dealer represents a blackjack dealer.
+    
+    Attributes
+    ----------
+    hand: Hand object
+        the dealer's hand
+        
+    Methods
+    -------
+    dealHand(hand)
+        starts the dealer off with a hand
+    playHand()
+        plays the dealer's hand according to the rules
+    payoutToPlayer(self, playerHand, playerBet)
+        how much should the dealer give to or take from the player
+    settlePlayer(player)
+        settles the accounts for all the player's hands and resets board for the next round
+    """
+    def __init__(self):
+        self.hand = None
+        
+    def dealHand(self, hand=None):
+        if hand is None:
+            self.hand = Hand()
+        else:
+            self.hand = hand
+            
+    def playHand(self):
+        finishedHand = False
+        while not finishedHand:
+            if self.hand.isBlackjack():
+                finishedHand = True
+            elif self.hand.isBust():
+                finishedHand = True
+            elif self.hand.value > 17:
+                finishedHand = True
+            elif self.hand.value == 17 and not dealerHand.isSoftHand():
+                self.hand.addCard()
+            else:
+                self.hand.addCard()
+                
+    def payoutToPlayer(self, playerHand, playerBet):
+        if playerHand.isBust(): return -playerBet
+        else:
+            if self.hand.isBust(): 
+                return playerBet
+            elif playerHand.isBlackjack() and not playerHand.is_original_hand: 
+                return 1.5*playerBet
+            elif playerHand.value > self.hand.value:
+                return playerBet
+            elif playerHand.value < self.hand.value:
+                return -playerBet
+            else:
+                return 0
+            
+    def settlePlayer(self, player):
+        n_hands = len(player.hands)
+        for i in range(n_hands):
+            playerHand = player.hands[i]
+            playerBet = player.bets[i]
+            payout = self.payoutToPlayer(playerHand, playerBet)
+            player.addToBankroll(payout)
+        player.resetBoard()
+
