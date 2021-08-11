@@ -38,6 +38,9 @@ class Card:
         else:
             pass
             
+    def __repr__(self):
+        return self.face_value
+            
     def isSoftAce(self):
         """
         Determines whether a card is both an ace and worth 11 points
@@ -103,13 +106,16 @@ class Hand:
     handToString()
         string describing the hand in blackjack terms e.g. 'pair of 3' or 'hard 13' or 'soft 15'
     """
-    def __init__(self, cards=None):
+    def __init__(self, cards=None, is_original_hand=True):
         """
         Parameters
         ----------
         cards: list of Card objects (default None)
             If None, then two cards are drawn at random.
+        is_original_hand: bool
+            indicates whether the hand was the first dealt, or was subsequent to splitting a pair (default True)
         """
+        self.is_original_hand = is_original_hand
         if cards is None:
             self.cards = [Card(), Card()]
         else:
@@ -264,9 +270,5 @@ class Hand:
             return 'hard ' + str(self.value)
 
     def __repr__(self):
-        if self.isPair():
-            repr = 'Pair of ' + self.cards[0].face_value + '\n'
-        else:
-            repr = 'Hand: ' + ' / '.join([card.face_value for card in self.cards]) + '\n'
-        repr += 'Value: %s'%self.handToString()
-        return repr
+        repr = 'original' if self.is_original_hand else 'secondary'
+        return repr + ' ' + self.handToString()
