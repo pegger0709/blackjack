@@ -41,7 +41,12 @@ class Card:
             pass
             
     def __repr__(self):
-        return self.face_value
+        if self.face_value == 'A' and self.isSoftAce():
+            return 'soft A'
+        elif self.face_value == 'A' and not self.isSoftAce():
+            return 'hard A'
+        else:
+            return self.face_value
             
     def isSoftAce(self):
         """
@@ -291,3 +296,59 @@ class Hand:
     def __repr__(self):
         repr = 'original' if self.is_original_hand else 'secondary'
         return repr + ' ' + self.handToString()
+        
+class Shoe:
+    """
+    class Shoe represents a shoe full of cards used by a dealer.
+    
+    Attributes
+    ----------
+    n_decks: int
+        the number of decks in the shoe
+    cards: dict
+        a dictionary showing how many of each type of card is in the shoe
+    shuffle: int
+        the number of cards from the back such that when this many cards remain, the shoe is shuffled
+        
+    Methods
+    numberOfCards()
+        returns the number of cards remaining in the shoe
+    dealCard()
+        removes a random card from the shoe and returns it
+    -------
+    
+    """
+    def __init__(self, n_decks=1, shuffle=0):
+        self.n_decks = n_decks
+        self.shuffle = shuffle
+        self.cards = {'A':4*n_decks, '2':4*n_decks, '3':4*n_decks, '4':4*n_decks, '5':4*n_decks, '6':4*n_decks, '7':4*n_decks, '8':4*n_decks, '9':4*n_decks, 'T':4*4*n_decks}
+    
+    def numberOfCards(self):
+        return sum(self.cards.values())
+    
+    def __repr__(self):
+        return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
+        
+    def dealCard(self, face_value=None):
+        if self.numberOfCards() == 0:
+            print('The shoe is empty')
+            return None
+        elif face_value is not None and self.cards[face_value] >= 1:
+            self.cards[face_value] -= 1
+            return Card(face_value)
+        elif face_value is not None and self.cards[face_value] == 0:
+            print('The shoe contains no more ' + face_value)
+            return None
+        else:
+            thresholds = list(accumulate(self.cards.values()))
+            x = random.randint(0, self.numberOfCards()-1)
+            for i in range(len(thresholds)):
+                if x < thresholds[i]:
+                    face_value = list(self.cards.keys())[i]
+                    break
+            else:
+                face_value = list(self.cards.keys())[-1]
+            self.cards[face_value] -= 1
+            return Card(face_value)
+        
+
