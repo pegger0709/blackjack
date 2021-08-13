@@ -1,4 +1,5 @@
 import random
+from itertools import accumulate
 
 class Card:
     """
@@ -315,19 +316,24 @@ class Shoe:
         returns the number of cards remaining in the shoe
     dealCard()
         removes a random card from the shoe and returns it
+    shuffleShoe()
+        resets the shoe to its initial state
     -------
     
     """
     def __init__(self, n_decks=1, shuffle=0):
         self.n_decks = n_decks
         self.shuffle = shuffle
-        self.cards = {'A':4*n_decks, '2':4*n_decks, '3':4*n_decks, '4':4*n_decks, '5':4*n_decks, '6':4*n_decks, '7':4*n_decks, '8':4*n_decks, '9':4*n_decks, 'T':4*4*n_decks}
+        self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
     
     def numberOfCards(self):
         return sum(self.cards.values())
     
     def __repr__(self):
         return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
+        
+    def shuffleShoe(self):
+        self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
         
     def dealCard(self, face_value=None):
         if self.numberOfCards() == 0:
