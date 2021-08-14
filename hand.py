@@ -4,14 +4,14 @@ from itertools import accumulate
 class Card:
     """
     class Card represents a single card in blackjack. Numbered cards are worth their face value. Face cards are worth 10 points. An ace is initially worth 11 points, though this value can be reduced to 1 point if necessary to prevent the total hand value from going over 21. An ace worth 11 points is called soft as its value can decrease, while an ace worth 1 point is called hard.
-    
+
     Attributes
     ----------
     face_value: str
         the value printed on the card. Note that we lump together all 10's and face cards as 'T'
     numeric_value: int
         the point value of the card per the rules of blackjack
-        
+
     Methods
     -------
     isSoftAce()
@@ -40,7 +40,7 @@ class Card:
             self.numeric_value = 11
         else:
             pass
-            
+
     def __repr__(self):
         if self.face_value == 'A' and self.isSoftAce():
             return 'soft A'
@@ -48,21 +48,21 @@ class Card:
             return 'hard A'
         else:
             return self.face_value
-            
+
     def isSoftAce(self):
         """
         Determines whether a card is both an ace and worth 11 points
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         isSoftAce: bool
             If True, the card is an ace worth 11 points
             If False, the card is either not an ace, or an ace worth 1 point
-            
+
         """
         if self.face_value == 'A' and self.numeric_value == 11:
             return True
@@ -72,11 +72,11 @@ class Card:
     def hardenAce(self):
         """
         Turns a soft ace (11 points) into a hard ace (1 point)
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -84,15 +84,15 @@ class Card:
         if self.face_value=='A' and self.isSoftAce():
             self.numeric_value = 1
 
-            
+
     def softenAce(self):
         """
         Turns a hard ace (1 points) into a soft ace (11 point)
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -104,7 +104,7 @@ class Card:
 class Hand:
     """
     class Hand represents a blackjack hand, which always starts with two cards, but may expand to three or more cards. A hand has a point value, the goal of blackjack is to get as close as possible to 21 without going over (busting). A hand consisting of an ace and ten is called a blackjack and pays 3 to 2.
-    
+
     Attributes
     ----------
     cards: list of Card objects
@@ -113,7 +113,7 @@ class Hand:
         the point value of the hand
     is_original_hand: bool
         whether the hand was the first dealt
-        
+
     Methods
     -------
     isBlackjack()
@@ -153,11 +153,11 @@ class Hand:
     def isBlackjack(self):
         """
         Determines whether a 2-card hand is a blackjack
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         isBlackjack: bool
@@ -176,11 +176,11 @@ class Hand:
     def isPair(self):
         """
         Determines whether a 2-card hand is a pair
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         isPair: bool
@@ -191,15 +191,15 @@ class Hand:
             return False
         else:
             return self.cards[0].face_value == self.cards[1].face_value
-            
+
     def isSoftHand(self):
         """
         Determines whether a hand contains a soft ace
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         isSoftHand: bool
@@ -212,15 +212,15 @@ class Hand:
                 break
         else:
             return False
-            
+
     def firstSoftAce(self):
         """
         Returns the first soft ace in a hand if applicable
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         firstSoftAce: Card object or None
@@ -232,15 +232,15 @@ class Hand:
                 break
         else:
             return None
-            
+
     def isBust(self):
         """
         Determines whether the hand has busted, i.e. gone over 21 points with no soft aces
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         isBust: bool
@@ -252,11 +252,11 @@ class Hand:
     def addCard(self, card=None):
         """
         Adds a card into the hand. In the event that the hand contains a soft ace and the new card causes the value of the hand to exceed 21, the ace is hardened and the value of the hand adjusted accordingly.
-        
+
         Parameters
         ----------
         card: Card object
-        
+
         Returns
         -------
         None
@@ -269,15 +269,15 @@ class Hand:
             self.value -= 10
             self.firstSoftAce().hardenAce()
             self.soft = self.isSoftHand()
-            
+
     def handToString(self):
         """
         Describes the hand in blackjack terminology. For instance, the hand [A, 3] is called a 'soft 14', while the hand [A, 3, 8] is called a 'hard 12'.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         handToString: str
@@ -297,11 +297,11 @@ class Hand:
     def __repr__(self):
         repr = 'original' if self.is_original_hand else 'secondary'
         return repr + ' ' + self.handToString()
-        
+
 class Shoe:
     """
     class Shoe represents a shoe full of cards used by a dealer.
-    
+
     Attributes
     ----------
     n_decks: int
@@ -310,7 +310,7 @@ class Shoe:
         a dictionary showing how many of each type of card is in the shoe
     shuffle: int
         the number of cards from the back such that when this many cards remain, the shoe is shuffled
-        
+
     Methods
     numberOfCards()
         returns the number of cards remaining in the shoe
@@ -319,22 +319,25 @@ class Shoe:
     shuffleShoe()
         resets the shoe to its initial state
     -------
-    
+
     """
     def __init__(self, n_decks=1, shuffle=0):
         self.n_decks = n_decks
         self.shuffle = shuffle
         self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
-    
+
     def numberOfCards(self):
         return sum(self.cards.values())
-    
+
     def __repr__(self):
         return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
-        
+
     def shuffleShoe(self):
         self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
-        
+
+    def timeToShuffle(self):
+        return self.numberOfCards() < self.shuffle
+
     def dealCard(self, face_value=None):
         if self.numberOfCards() == 0:
             print('The shoe is empty')
@@ -356,5 +359,6 @@ class Shoe:
                 face_value = list(self.cards.keys())[-1]
             self.cards[face_value] -= 1
             return Card(face_value)
-        
 
+    def dealHand(self):
+        return Hand([self.dealCard(), self.dealCard()])

@@ -6,16 +6,18 @@ def runSimulation(initial_bankroll, bet_per_hand, n_runs, n_hands_per_run):
     df = pd.DataFrame(index=range(n_hands_per_run), columns=['run_%d'%j for j in range(n_runs)])
     useBasicStrategy = True
     for j in range(n_runs):
+        shoe = Shoe(6, 100)
         player = Player(initial_bankroll)
         for i in range(n_hands_per_run):
             if player.bankroll > bet_per_hand:
-                dealerUpCard = Card()
-                playerHand = Hand()
-                player.playHand(playerHand, dealerUpCard, bet_per_hand, useBasicStrategy)
-                dealer.dealHand(Hand([dealerUpCard, Card()]))
-                dealer.playHand()
+                dealerUpCard = shoe.dealCard()
+                playerHand = shoe.dealHand()
+                player.playHand(playerHand, dealerUpCard, shoe, bet_per_hand, useBasicStrategy)
+                dealer.dealHand(Hand([dealerUpCard, shoe.dealCard()]))
+                dealer.playHand(shoe)
                 dealer.settlePlayer(player)
                 df.loc[i,'run_%d'%j] = player.bankroll
+                if shoe.timeToShuffle(): shoe.shuffleShoe()
             else:
                 color = 'red'
                 break
@@ -30,7 +32,7 @@ def runSimulation(initial_bankroll, bet_per_hand, n_runs, n_hands_per_run):
     plt.xlim([0, n_hands_per_run])
     plt.ylim(bottom=0)
     plt.ylabel('bankroll')
-    plt.xlabel('number of hands played at $%d per hand' % bet_per_hand) 
+    plt.xlabel('number of hands played at $%d per hand' % bet_per_hand)
     plt.savefig('MC_runs.png')
 
 if __name__ == '__main__':
@@ -39,5 +41,3 @@ if __name__ == '__main__':
     n_runs = int(input('Please enter the number of Monte Carlo runs: '))
     n_hands_per_run = int(input('Please enter the maximum number of hands you want to play: '))
     runSimulation(initial_bankroll, bet_per_hand, n_runs, n_hands_per_run)
-
-
