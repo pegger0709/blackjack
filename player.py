@@ -1,6 +1,7 @@
 from basic_strategy import *
 from hand import *
 
+COUNT_BY_CARD = {'A':-1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':0,'8':0,'9':0,'T':-1}
 
 class Player:
     """
@@ -14,6 +15,8 @@ class Player:
         the blackjack hands the player has. May be more than one if splitting pairs
     bets: list of floats
         the bets corresponding to the hands. They may not all be identical due to doubling down
+    count: int
+        the running count in the player's head during card counting
 
     Methods
     -------
@@ -23,6 +26,8 @@ class Player:
         plays the dealt hand either on the fly or according to basic strategy
     addToBankroll(amount)
         adds a player's winnings to (or deducts losses from) the bankroll
+    addToCount(count)
+        adds to the rolling card count
     resetBoard()
         gets rid of all hands and resets the board
     """
@@ -36,9 +41,10 @@ class Player:
         self.bankroll = bankroll
         self.hands = []
         self.bets = []
+        self.count = 0
 
     def __repr__(self):
-        return 'Bankroll: %.1f dollars' % self.bankroll
+        return 'Bankroll: %.1f dollars, count: %d' % (self.bankroll, self.count)
 
     def finish(self, hand, bet):
         """
@@ -113,6 +119,7 @@ class Player:
             print('Dealer up card: ' + dealerUpCard.face_value)
             print(playerHand)
 
+        self.addToCount(COUNT_BY_CARD[playerHand.cards[0].face_value] + COUNT_BY_CARD[playerHand.cards[1].face_value])
         while True:
             if playerHand.isBust():
                 self.finish(playerHand, bet)
@@ -133,10 +140,14 @@ class Player:
                 self.finish(playerHand, bet)
                 break
             elif choice=='h':
-                playerHand.addCard(shoe.dealCard())
+                newCard = shoe.dealCard()
+                playerHand.addCard(newCard)
+                self.addToCount(COUNT_BY_CARD[newCard.face_value])
                 if not useBasicStrategy: print(playerHand)
             elif choice=='d':
-                playerHand.addCard(shoe.dealCard())
+                newCard = shoe.dealCard()
+                playerHand.addCard(newCard)
+                self.addToCount(COUNT_BY_CARD[newCard.face_value])
                 self.finish(playerHand, 2*bet)
                 break
             elif choice=='p':
@@ -153,6 +164,9 @@ class Player:
                     break
             else:
                 pass
+
+    def addToCount(self, number=0):
+        self.count += number
 
 class Dealer:
     """
@@ -265,3 +279,4 @@ class Dealer:
             payout = self.payoutToPlayer(playerHand, playerBet)
             player.addToBankroll(payout)
         player.resetBoard()
+        self.hand = None

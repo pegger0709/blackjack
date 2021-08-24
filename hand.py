@@ -295,8 +295,12 @@ class Hand:
             return 'hard ' + str(self.value)
 
     def __repr__(self):
-        repr = 'original' if self.is_original_hand else 'secondary'
-        return repr + ' ' + self.handToString()
+        repr = '/'.join([card.face_value for card in self.cards])
+        repr += ' ('
+        repr += 'original ' if self.is_original_hand else 'secondary '
+        repr += self.handToString()
+        repr += ')'
+        return repr
 
 class Shoe:
     """
