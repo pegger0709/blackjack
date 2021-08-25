@@ -26,8 +26,8 @@ class Player:
         plays the dealt hand either on the fly or according to basic strategy
     addToBankroll(amount)
         adds a player's winnings to (or deducts losses from) the bankroll
-    addToCount(count)
-        adds to the rolling card count
+    addToCount(number)
+        adds to the running count
     resetBoard()
         gets rid of all hands and resets the board
     resetCount()
@@ -43,10 +43,10 @@ class Player:
         self.bankroll = bankroll
         self.hands = []
         self.bets = []
-        self.count = 0
+        self.running_count = 0
 
     def __repr__(self):
-        return 'Bankroll: %.1f dollars, count: %d' % (self.bankroll, self.count)
+        return 'Bankroll: %.1f dollars, count: %d' % (self.bankroll, self.running_count)
 
     def finish(self, hand, bet):
         """
@@ -168,10 +168,10 @@ class Player:
                 pass
 
     def addToCount(self, number=0):
-        self.count += number
+        self.running_count += number
     
     def resetCount(self):
-        self.count = 0
+        self.running_count = 0
 
 class Dealer:
     """

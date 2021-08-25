@@ -325,7 +325,7 @@ class Shoe:
     -------
 
     """
-    def __init__(self, n_decks=1, shuffle=0):
+    def __init__(self, n_decks=-1, shuffle=0):
         self.n_decks = n_decks
         self.shuffle = shuffle
         if n_decks != -1:
@@ -340,7 +340,10 @@ class Shoe:
         return self.n_decks == -1
 
     def __repr__(self):
-        return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
+        if self.isInfinite():
+            return 'Infinite shoe'
+        else:
+            return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
 
     def shuffleShoe(self):
         if self.isInfinite():
@@ -356,7 +359,7 @@ class Shoe:
             print('The shoe is empty')
             return None
         elif face_value is not None and self.cards[face_value] >= 1:
-            if ~self.isInfinite(): self.cards[face_value] -= 1
+            if not self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
         elif face_value is not None and self.cards[face_value] == 0:
             print('The shoe contains no more ' + face_value)
@@ -370,7 +373,7 @@ class Shoe:
                     break
             else:
                 face_value = list(self.cards.keys())[-1]
-            if ~self.isInfinite(): self.cards[face_value] -= 1
+            if not self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
 
     def dealHand(self):
