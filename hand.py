@@ -328,16 +328,25 @@ class Shoe:
     def __init__(self, n_decks=1, shuffle=0):
         self.n_decks = n_decks
         self.shuffle = shuffle
-        self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
+        if n_decks != -1:
+            self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
+        else:
+            self.cards = {'A':4, '2':4, '3':4, '4':4, '5':4, '6':4, '7':4, '8':4, '9':4, 'T':4*4}
 
     def numberOfCards(self):
         return sum(self.cards.values())
+        
+    def isInfinite(self):
+        return self.n_decks == -1
 
     def __repr__(self):
         return '%d cards remaining, shuffle when %d cards remain' % (self.numberOfCards(), self.shuffle)
 
     def shuffleShoe(self):
-        self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
+        if self.isInfinite():
+            pass
+        else:
+            self.cards = {'A':4*self.n_decks, '2':4*self.n_decks, '3':4*self.n_decks, '4':4*self.n_decks, '5':4*self.n_decks, '6':4*self.n_decks, '7':4*self.n_decks, '8':4*self.n_decks, '9':4*self.n_decks, 'T':4*4*self.n_decks}
 
     def timeToShuffle(self):
         return self.numberOfCards() < self.shuffle
@@ -347,7 +356,7 @@ class Shoe:
             print('The shoe is empty')
             return None
         elif face_value is not None and self.cards[face_value] >= 1:
-            self.cards[face_value] -= 1
+            if ~self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
         elif face_value is not None and self.cards[face_value] == 0:
             print('The shoe contains no more ' + face_value)
@@ -361,7 +370,7 @@ class Shoe:
                     break
             else:
                 face_value = list(self.cards.keys())[-1]
-            self.cards[face_value] -= 1
+            if ~self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
 
     def dealHand(self):
