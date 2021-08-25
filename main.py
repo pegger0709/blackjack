@@ -26,8 +26,9 @@ def runSimulation():
         shoe = Shoe(args.n_decks, args.shoe_shuffle)
         player = Player(args.initial_bankroll)
         for i in range(args.n_hands_per_run):
+            true_count = 52.0 * player.running_count / shoe.numberOfCards()
             if player.bankroll > args.bet_per_hand:
-                bet = 5*args.bet_per_hand if args.count_cards and player.count > 10 else args.bet_per_hand
+                bet = 5*args.bet_per_hand if args.count_cards and true_count > 1 else args.bet_per_hand
                 dealerUpCard = shoe.dealCard()
                 playerHand = shoe.dealHand()
                 player.playHand(playerHand, dealerUpCard, shoe, bet, useBasicStrategy)
