@@ -30,6 +30,8 @@ class Player:
         adds to the rolling card count
     resetBoard()
         gets rid of all hands and resets the board
+    resetCount()
+        resets the player's count to zero when the shoe is shuffled
     """
     def __init__(self, bankroll=0):
         """
@@ -94,7 +96,7 @@ class Player:
 
     def playHand(self, playerHand, dealerUpCard, shoe, bet=0, useBasicStrategy=True, verbose=False):
         """
-        Plays the hand either automatically using the basic strategy or based on user input.
+        Plays the hand either automatically using the basic strategy or based on user input, counting cards as they go.
 
         Parameters
         ----------
@@ -167,6 +169,9 @@ class Player:
 
     def addToCount(self, number=0):
         self.count += number
+    
+    def resetCount(self):
+        self.count = 0
 
 class Dealer:
     """

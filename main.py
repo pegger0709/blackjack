@@ -1,16 +1,33 @@
 from player import *
+import argparse
 import matplotlib.pyplot as plt
 
-def runSimulation(initial_bankroll, bet_per_hand, n_decks, shoe_shuffle, n_runs, n_hands_per_run, count_cards=False):
+def buildArgsParser():
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawTextHelpFormatter,
+        epilog="")
+    p._optionals.title = "Generic options"
+    p.add_argument('--bankroll', dest='initial_bankroll', type=int, default=100, help="Initial bankroll of the player.")
+    p.add_argument('--bet', dest='bet_per_hand', type=int, default=10, help="How much to bet on each hand.")
+    p.add_argument('--decks', dest='n_decks', type=int, default=6, help="How many decks to put in the shoe.")
+    p.add_argument('--shuffle', dest='shoe_shuffle', type=int, default=100, help="How many cards to leave undealt in the shoe.")
+    p.add_argument('--runs', dest='n_runs', type=int, default=1000, help="How many Monte Carlo runs to perform.")
+    p.add_argument('--hands', dest='n_hands_per_run', type=int, default=500, help="Maximum number of hands to play per Monte Carlo run.")
+    p.add_argument('--count', action='store_true', dest='count_cards', default=False, help='If set, increase bet when count favors the player.')
+    return p
+
+def runSimulation():
+    parser = buildArgsParser()
+    args = parser.parse_args()
     dealer = Dealer()
-    df = pd.DataFrame(index=range(n_hands_per_run), columns=['run_%d'%j for j in range(n_runs)])
+    df = pd.DataFrame(index=range(args.n_hands_per_run), columns=['run_%d'%j for j in range(args.n_runs)])
     useBasicStrategy = True
-    for j in range(n_runs):
-        shoe = Shoe(n_decks, shoe_shuffle)
-        player = Player(initial_bankroll)
-        for i in range(n_hands_per_run):
-            if player.bankroll > bet_per_hand:
-                bet = 5*bet_per_hand if count_cards and player.count > 10 else bet_per_hand
+    for j in range(args.n_runs):
+        shoe = Shoe(args.n_decks, args.shoe_shuffle)
+        player = Player(args.initial_bankroll)
+        for i in range(args.n_hands_per_run):
+            if player.bankroll > args.bet_per_hand:
+                bet = 5*args.bet_per_hand if args.count_cards and player.count > 10 else args.bet_per_hand
                 dealerUpCard = shoe.dealCard()
                 playerHand = shoe.dealHand()
                 player.playHand(playerHand, dealerUpCard, shoe, bet, useBasicStrategy)
@@ -19,31 +36,26 @@ def runSimulation(initial_bankroll, bet_per_hand, n_decks, shoe_shuffle, n_runs,
                 for card in dealer.hand.cards: player.addToCount(COUNT_BY_CARD[card.face_value])
                 dealer.settlePlayer(player)
                 df.loc[i,'run_%d'%j] = player.bankroll
-                if shoe.timeToShuffle(): shoe.shuffleShoe()
+                if shoe.timeToShuffle(): 
+                    shoe.shuffleShoe()
+                    player.resetCount()
             else:
                 color = 'red'
                 break
         else:
             color = 'yellow'
-        if df.loc[n_hands_per_run-1,'run_%d'%j] >= initial_bankroll: color = 'green'
+        if df.loc[args.n_hands_per_run-1,'run_%d'%j] >= args.initial_bankroll: color = 'green'
 
         plt.plot(df.loc[:,'run_%d'%j], alpha=0.05, c=color)
 
-    filename = 'MC_runs_counting_cards' if count_cards else 'MC_runs'
+    filename = 'MC_runs_counting_cards' if args.count_cards else 'MC_runs'
     df.to_csv(filename+'.csv', index=False)
-    plt.axhline(initial_bankroll, c='k', linestyle='--')
-    plt.xlim([0, n_hands_per_run])
-    plt.ylim(bottom=0)
+    plt.axhline(args.initial_bankroll, c='k', linestyle='--')
+    plt.xlim([0, args.n_hands_per_run])
+    plt.ylim(bottom=0, top=10*args.initial_bankroll)
     plt.ylabel('bankroll')
-    plt.xlabel('number of hands played at $%d per hand' % bet_per_hand)
+    plt.xlabel('number of hands played at $%d per hand' % args.bet_per_hand)
     plt.savefig(filename+'.png')
 
 if __name__ == '__main__':
-    initial_bankroll = int(input('Please enter initial bankroll in dollars: '))
-    bet_per_hand = int(input('Please enter the amount to bet per hand: '))
-    n_decks = int(input('Please enter the number of decks in the shoe: '))
-    shoe_shuffle = int(input('Please enter the number of cards to leave undealt in the shoe: '))
-    n_runs = int(input('Please enter the number of Monte Carlo runs: '))
-    n_hands_per_run = int(input('Please enter the maximum number of hands you want to play: '))
-    count_cards = input('Press C if you want to count cards and adjust bets: ')=='C'
-    runSimulation(initial_bankroll, bet_per_hand, n_decks, shoe_shuffle, n_runs, n_hands_per_run, count_cards)
+    runSimulation()
