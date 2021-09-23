@@ -42,12 +42,7 @@ class Card:
             pass
 
     def __repr__(self):
-        if self.face_value == 'A' and self.isSoftAce():
-            return 'soft A'
-        elif self.face_value == 'A' and not self.isSoftAce():
-            return 'hard A'
-        else:
-            return self.face_value
+        return self.face_value
 
     def isSoftAce(self):
         """
@@ -297,7 +292,7 @@ class Hand:
     def __repr__(self):
         repr = '/'.join([card.face_value for card in self.cards])
         repr += ' ('
-        repr += 'original ' if self.is_original_hand else 'secondary '
+        #repr += 'original ' if self.is_original_hand else 'secondary '
         repr += self.handToString()
         repr += ')'
         return repr
@@ -353,6 +348,17 @@ class Shoe:
 
     def timeToShuffle(self):
         return self.numberOfCards() < self.shuffle
+        
+    def randomCard(self):
+        thresholds = list(accumulate(self.cards.values()))
+        x = random.randint(0, self.numberOfCards()-1)
+        for i in range(len(thresholds)):
+            if x < thresholds[i]:
+                face_value = list(self.cards.keys())[i]
+                break
+        else:
+            face_value = list(self.cards.keys())[-1]
+        return face_value    
 
     def dealCard(self, face_value=None):
         if self.numberOfCards() == 0:
@@ -361,18 +367,8 @@ class Shoe:
         elif face_value is not None and self.cards[face_value] >= 1:
             if not self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
-        elif face_value is not None and self.cards[face_value] == 0:
-            print('The shoe contains no more ' + face_value)
-            return None
         else:
-            thresholds = list(accumulate(self.cards.values()))
-            x = random.randint(0, self.numberOfCards()-1)
-            for i in range(len(thresholds)):
-                if x < thresholds[i]:
-                    face_value = list(self.cards.keys())[i]
-                    break
-            else:
-                face_value = list(self.cards.keys())[-1]
+            face_value = self.randomCard()
             if not self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
 

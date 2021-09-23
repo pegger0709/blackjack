@@ -48,7 +48,7 @@ class Player:
     def __repr__(self):
         return 'Bankroll: %.1f dollars, count: %d' % (self.bankroll, self.running_count)
 
-    def finish(self, hand, bet):
+    def finish(self, hand, bet, verbose=False, outputFile=None):
         """
         Stores the hand and bet in memory, no longer to be touched until it is time to settle accounts
 
@@ -61,6 +61,10 @@ class Player:
         -------
         None
         """
+        if verbose:
+            if hand.isBust(): outputFile.write(f'Player busts with bet {bet}\n')
+            elif hand.isBlackjack(): outputFile.write(f'Player holds blackjack with bet {bet}\n')
+            else: outputFile.write(f'Player finishes with hand {hand} and bet {bet}\n')
         self.hands.append(hand)
         self.bets.append(bet)
 
@@ -94,7 +98,7 @@ class Player:
         """
         self.bankroll += amount
 
-    def playHand(self, playerHand, dealerUpCard, shoe, bet=0, useBasicStrategy=True, verbose=False):
+    def playHand(self, playerHand, dealerUpCard, shoe, bet=0, useBasicStrategy=True, verbose=False, outputFile=None):
         """
         Plays the hand either automatically using the basic strategy or based on user input, counting cards as they go.
 
@@ -117,17 +121,16 @@ class Player:
         None
         """
         if bet > self.bankroll: pass
-        if verbose or not useBasicStrategy:
-            print('Dealer up card: ' + dealerUpCard.face_value)
-            print(playerHand)
+        if verbose:
+            outputFile.write(f'Dealer shows {dealerUpCard}\n')
+            outputFile.write(f'Player holds {playerHand}\n')
 
-        self.addToCount(COUNT_BY_CARD[playerHand.cards[0].face_value] + COUNT_BY_CARD[playerHand.cards[1].face_value])
         while True:
             if playerHand.isBust():
-                self.finish(playerHand, bet)
+                self.finish(playerHand, bet, verbose, outputFile)
                 break
             if playerHand.isBlackjack():
-                self.finish(playerHand, bet)
+                self.finish(playerHand, bet, verbose, outputFile)
                 break
 
             basicStrategyChoice = BASIC_STRATEGY.loc[playerHand.handToString(), dealerUpCard.face_value]
@@ -139,30 +142,31 @@ class Player:
                 choice = input('(h)it, (s)tand, (d)ouble down? Basic strategy: %s\n' % basicStrategyChoice)
 
             if choice=='s':
-                self.finish(playerHand, bet)
+                if verbose: outputFile.write('Player stands\n')
+                self.finish(playerHand, bet, verbose, outputFile)
                 break
             elif choice=='h':
+                if verbose: outputFile.write('Player hits\n')
                 newCard = shoe.dealCard()
                 playerHand.addCard(newCard)
-                self.addToCount(COUNT_BY_CARD[newCard.face_value])
-                if not useBasicStrategy: print(playerHand)
+                if verbose: outputFile.write(f'Player holds {playerHand}\n')
             elif choice=='d':
+                if verbose: outputFile.write('Player doubles down\n')
                 newCard = shoe.dealCard()
                 playerHand.addCard(newCard)
-                self.addToCount(COUNT_BY_CARD[newCard.face_value])
-                self.finish(playerHand, 2*bet)
+                self.finish(playerHand, 2*bet, verbose, outputFile)
                 break
             elif choice=='p':
                 if playerHand.isPair():
-                    if verbose: print('split')
+                    if verbose: outputFile.write('Player splits\n')
                     leftSplitCard = playerHand.cards[0]
                     leftSplitCard.softenAce()
                     leftSplitHand = Hand([leftSplitCard, shoe.dealCard()], is_original_hand=False)
-                    self.playHand(leftSplitHand, dealerUpCard, shoe, bet, useBasicStrategy)
+                    self.playHand(leftSplitHand, dealerUpCard, shoe, bet, useBasicStrategy, verbose, outputFile)
                     rightSplitCard = playerHand.cards[1]
                     rightSplitCard.softenAce()
                     rightSplitHand = Hand([rightSplitCard, shoe.dealCard()], is_original_hand=False)
-                    self.playHand(rightSplitHand, dealerUpCard, shoe, bet, useBasicStrategy)
+                    self.playHand(rightSplitHand, dealerUpCard, shoe, bet, useBasicStrategy, verbose, outputFile)
                     break
             else:
                 pass
@@ -214,7 +218,7 @@ class Dealer:
         else:
             self.hand = hand
 
-    def playHand(self, shoe):
+    def playHand(self, shoe, verbose=False, outputFile=None):
         """
         Makes the dealer play the hand according to the rules (hits soft 17)
 
@@ -229,15 +233,20 @@ class Dealer:
         """
         finishedHand = False
         while not finishedHand:
+            if verbose: outputFile.write(f'Dealer holds {self.hand}\n')
             if self.hand.isBlackjack():
                 finishedHand = True
             elif self.hand.isBust():
+                if verbose: outputFile.write('Dealer busts\n')
                 finishedHand = True
             elif self.hand.value > 17:
+                if verbose: outputFile.write(f'Dealer stands on {self.hand}\n')
                 finishedHand = True
             elif self.hand.value == 17 and not self.hand.isSoftHand():
-                self.hand.addCard(shoe.dealCard())
+                if verbose: outputFile.write(f'Dealer stands on {self.hand}\n')
+                finishedHand = True
             else:
+                if verbose: outputFile.write('Dealer hits\n')
                 self.hand.addCard(shoe.dealCard())
 
     def payoutToPlayer(self, playerHand, playerBet):
@@ -265,7 +274,7 @@ class Dealer:
             else:
                 return 0
 
-    def settlePlayer(self, player):
+    def settlePlayer(self, player, verbose=False, outputFile=None):
         """
         Settles accounts with the player and clears board for the next round of play
 
@@ -278,10 +287,15 @@ class Dealer:
         None
         """
         n_hands = len(player.hands)
-        for i in range(n_hands):
-            playerHand = player.hands[i]
-            playerBet = player.bets[i]
+        for ii in range(n_hands):
+            playerHand = player.hands[ii]
+            playerBet = player.bets[ii]
             payout = self.payoutToPlayer(playerHand, playerBet)
+            if verbose: 
+                outputFile.write(f'Dealer: {self.hand.value}, Player hand {ii+1}: {playerHand.value}\n')
+                if payout > 0: outputFile.write(f'Player wins {payout}\n')
+                elif payout < 0: outputFile.write(f'Player loses {-payout}\n')
+                else: outputFile.write('Player and Dealer tie\n')
             player.addToBankroll(payout)
         player.resetBoard()
         self.hand = None
