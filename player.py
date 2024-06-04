@@ -46,7 +46,7 @@ class Player:
         self.running_count = 0
 
     def __repr__(self):
-        return 'Bankroll: %.1f dollars, count: %d' % (self.bankroll, self.running_count)
+        return f'Bankroll: {self.bankroll:.1f} dollars, count: {self.running_count}'
 
     def finish(self, hand, bet, verbose=False, outputFile=None):
         """
@@ -137,9 +137,9 @@ class Player:
             if useBasicStrategy:
                 choice = basicStrategyChoice
             elif playerHand.isPair():
-                choice = input('(h)it, (s)tand, (d)ouble down, s(p)lit pair? Basic strategy: %s\n' % basicStrategyChoice)
+                choice = input(f'(h)it, (s)tand, (d)ouble down, s(p)lit pair? [default basic strategy: {basicStrategyChoice}]\n').strip() or basicStrategyChoice
             else:
-                choice = input('(h)it, (s)tand, (d)ouble down? Basic strategy: %s\n' % basicStrategyChoice)
+                choice = input(f'(h)it, (s)tand, (d)ouble down? Basic strategy: [default basic strategy: {basicStrategyChoice}]\n').strip() or basicStrategyChoice
 
             if choice=='s':
                 if verbose: outputFile.write('Player stands\n')
