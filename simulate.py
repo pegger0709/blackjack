@@ -14,6 +14,7 @@ def buildArgsParser():
     p.add_argument('--runs', dest='n_runs', type=int, default=1000, help="How many Monte Carlo runs to perform.")
     p.add_argument('--hands', dest='n_hands_per_run', type=int, default=100000, help="Maximum number of hands to play per Monte Carlo run.")
     p.add_argument('--count', action='store_true', dest='count_cards', default=False, help='If set, increase bet when count favors the player.')
+    p.add_argument('--verbose', action='store_true', dest='verbose', default=False, help='If set, record certain hands.')
     return p
 
 def runSimulation():
@@ -26,7 +27,7 @@ def runSimulation():
         shoe = Shoe(args.n_decks, args.shoe_shuffle)
         player = Player(args.initial_bankroll)
         for i in range(args.n_hands_per_run):
-            verbose = (j % 1000 == 0) and (i % 10000 == 0)
+            verbose = (j % 1000 == 0) and (i % 10000 == 0) and args.verbose
             outputFile = open(f"hands{'_count_cards' if args.count_cards else ''}/run_{j}/hand_{i}.txt", "a") if verbose else None
             trueCount = 52.0 * player.running_count / shoe.numberOfCards()
             if player.bankroll > args.bet_per_hand:
