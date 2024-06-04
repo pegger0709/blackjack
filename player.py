@@ -265,7 +265,7 @@ class Dealer:
         else:
             if self.hand.isBust():
                 return playerBet
-            elif playerHand.isBlackjack() and not playerHand.is_original_hand:
+            elif playerHand.isBlackjack() and playerHand.is_original_hand:
                 return 1.5*playerBet
             elif playerHand.value > self.hand.value:
                 return playerBet
