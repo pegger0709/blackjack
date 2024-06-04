@@ -30,7 +30,9 @@ If you want to increase bets when the count is favorable, include the flag `--co
 
 If you want to compare the basic strategy runs with the card counting runs, run
 ```
-python .\measure_profitability.py
+python .\measure_profitability.py \
+--bankroll <initial_bankroll_of_player> \
+--bet <amount_to_bet_on_each_hand>
 ```
 and enter whatever was the initial bankroll when prompted.
 
