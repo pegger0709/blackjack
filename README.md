@@ -35,7 +35,7 @@ python .\measure_profitability.py \
 --bet <amount_to_bet_on_each_hand>
 ```
 
-As an example, you could run
+As an example, you could run 
 ```
 python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256
 python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256 --count
