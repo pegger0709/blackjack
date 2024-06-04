@@ -28,6 +28,12 @@ python .\simulate.py \
 ```
 If you want to increase bets when the count is favorable, include the flag `--count` at the end.
 
+If you want to compare the basic strategy runs with the card counting runs, run
+```
+python .\measure_profitability.py
+```
+and enter whatever was the initial bankroll when prompted.
+
 ## A refresher course on the game
 If you are here, chances are you know how to play the casino card game of blackjack. Nonetheless, it's worth taking some time for a refresher course on the basic rules and gameplay. You can find more resources online. Keep in mind there are minor variations and you should check the particulars of a casino near you; **I cannot bear responsibility for any gambling losses on your part**.
 
