@@ -34,7 +34,13 @@ python .\measure_profitability.py \
 --bankroll <initial_bankroll_of_player> \
 --bet <amount_to_bet_on_each_hand>
 ```
-and enter whatever was the initial bankroll when prompted.
+
+As an example, you could run
+```
+python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256
+python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256 --count
+python .\measure_profitablity.py --bankroll 100 --bet 1 
+```
 
 ## A refresher course on the game
 If you are here, chances are you know how to play the casino card game of blackjack. Nonetheless, it's worth taking some time for a refresher course on the basic rules and gameplay. You can find more resources online. Keep in mind there are minor variations and you should check the particulars of a casino near you; **I cannot bear responsibility for any gambling losses on your part**.
