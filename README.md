@@ -1,7 +1,9 @@
 # Blackjack
 To clone this repo, open a terminal and run
 
-```git clone https://github.com/pegger0709/blackjack.git```
+```
+git clone https://github.com/pegger0709/blackjack.git
+```
 
 ## What this repo contains
 If you want to play the game of blackjack as if you were in a casino, run
