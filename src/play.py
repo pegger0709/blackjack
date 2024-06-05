@@ -27,7 +27,7 @@ if __name__ == "__main__":
         print(player)
         true_count = player.running_count * 52 / shoe.numberOfCards()
         bet = int(input("Please enter the bet: "))
-        pdb.set_trace()
+        #pdb.set_trace()
         dealerUpCard = shoe.dealCard()
         playerHand = shoe.dealHand()
         #pdb.set_trace()
