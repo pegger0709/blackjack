@@ -372,5 +372,8 @@ class Shoe:
             if not self.isInfinite(): self.cards[face_value] -= 1
             return Card(face_value)
 
-    def dealHand(self):
-        return Hand([self.dealCard(), self.dealCard()])
+    def dealHand(self, cards=None):
+        if cards is not None:
+            return Hand([self.dealCard(card) for card in cards])
+        else:
+            return Hand([self.dealCard(), self.dealCard()])
