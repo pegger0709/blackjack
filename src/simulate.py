@@ -29,7 +29,7 @@ def runSimulation():
         for i in range(args.n_hands_per_run):
             verbose = (j % 1000 == 0) and (i % 10000 == 0) and args.verbose
             outputFile = open(f"hands{'_count_cards' if args.count_cards else ''}/run_{j}/hand_{i}.txt", "a") if verbose else None
-            trueCount = 52.0 * player.running_count / shoe.numberOfCards()
+            trueCount = 52.0 * player.running_count / shoe.numberOfCards() if shoe.n_decks!= -1 else 0.0
             if player.bankroll > args.bet_per_hand:
                 if args.count_cards and trueCount > 1:
                     bet = 5*args.bet_per_hand
