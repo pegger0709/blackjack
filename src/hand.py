@@ -161,6 +161,8 @@ class Hand:
         """
         if len(self.cards) != 2:
             return False
+        elif not self.is_original_hand:
+            return False
         elif (self.cards[0].face_value == 'A' and self.cards[1].face_value == 'T'):
             return True
         elif (self.cards[0].face_value == 'T' and self.cards[1].face_value == 'A'):
