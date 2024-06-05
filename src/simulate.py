@@ -13,7 +13,7 @@ def buildArgsParser():
     p.add_argument('--shuffle', dest='shoe_shuffle', type=int, default=100, help="How many cards to leave undealt in the shoe.")
     p.add_argument('--runs', dest='n_runs', type=int, default=1000, help="How many Monte Carlo runs to perform.")
     p.add_argument('--hands', dest='n_hands_per_run', type=int, default=100000, help="Maximum number of hands to play per Monte Carlo run.")
-    p.add_argument('--count', action='store_true', dest='count_cards', default=False, help='If set, increase bet when count favors the player.')
+    p.add_argument('--count_factor', dest='count_factor', type=int, default=1, help='Factor by which to multiply bet when the count favors the player')
     p.add_argument('--verbose', action='store_true', dest='verbose', default=False, help='If set, record certain hands.')
     return p
 
@@ -28,12 +28,12 @@ def runSimulation():
         player = Player(args.initial_bankroll)
         for i in range(args.n_hands_per_run):
             verbose = (j % 1000 == 0) and (i % 10000 == 0) and args.verbose
-            outputFile = open(f"hands{'_count_cards' if args.count_cards else ''}/run_{j}/hand_{i}.txt", "a") if verbose else None
+            outputFile = open(f"hands{'_count_cards' if args.count_factor!=1 else ''}/run_{j}/hand_{i}.txt", "a") if verbose else None
             trueCount = 52.0 * player.running_count / shoe.numberOfCards() if shoe.n_decks!= -1 else 0.0
             if player.bankroll > args.bet_per_hand:
-                if args.count_cards and trueCount > 1:
-                    bet = 5*args.bet_per_hand
-                elif args.count_cards and trueCount < -1:
+                if args.count_factor!=1 and trueCount > 1:
+                    bet = args.count_factor * args.bet_per_hand
+                elif args.count_factor!=1 and trueCount < -1:
                     bet = 0
                 else:
                     bet = args.bet_per_hand
@@ -57,7 +57,7 @@ def runSimulation():
             else:
                 break
 
-    filename = 'data/MC_runs_counting_cards' if args.count_cards else 'data/MC_runs'
+    filename = f'data/MC_runs_counting_cards_factor_{args.count_factor}' if args.count_factor!=1 else 'data/MC_runs'
     df.to_csv(filename+'.csv', index=False)
     plot(df.fillna(0), args.initial_bankroll, args.bet_per_hand, args.n_hands_per_run)
     plt.savefig(filename+'.png')
