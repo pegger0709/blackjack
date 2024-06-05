@@ -25,7 +25,8 @@ if __name__ == "__main__":
     while player.bankroll > 0:
         print(shoe)
         print(player)
-        true_count = player.running_count * 52 / shoe.numberOfCards()
+        true_count = 0 if shoe.n_decks == -1 else player.running_count * 52 / shoe.numberOfCards()
+        print(f"The true count is {true_count :.2f}")
         bet = int(input("Please enter the bet: "))
         #pdb.set_trace()
         dealerUpCard = shoe.dealCard()
