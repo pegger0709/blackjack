@@ -1,8 +1,10 @@
 # Blackjack
-To clone this repo, open a terminal and run
+To prepare to use this repo, open a terminal and run
 
 ```
 git clone https://github.com/pegger0709/blackjack.git
+cd blackjack
+pip install -r requirements.txt
 ```
 
 ## What this repo contains
