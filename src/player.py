@@ -1,4 +1,4 @@
-from basic_strategy import *
+from utils.basic_strategy import *
 from hand import *
 
 COUNT_BY_CARD = {'A':-1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':0,'8':0,'9':0,'T':-1}
