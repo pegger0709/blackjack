@@ -1,5 +1,6 @@
 import argparse
 import sys
+import pdb
 from player import *
 
 def buildArgsParser():
@@ -26,12 +27,17 @@ if __name__ == "__main__":
         print(player)
         true_count = player.running_count * 52 / shoe.numberOfCards()
         bet = int(input("Please enter the bet: "))
+        pdb.set_trace()
         dealerUpCard = shoe.dealCard()
         playerHand = shoe.dealHand()
+        #pdb.set_trace()
         player.playHand(playerHand, dealerUpCard, shoe, bet, useBasicStrategy, verbose, outputFile)
         dealer.dealHand(Hand([dealerUpCard, shoe.dealCard()]))
+        #pdb.set_trace()
         dealer.playHand(shoe, verbose, outputFile)
-        for hand in player.hands+[dealer.hand]:
-            for card in hand.cards: player.addToCount(COUNT_BY_CARD[card.face_value])
+        #pdb.set_trace()
+        if args.n_decks != -1:
+            for hand in player.hands+[dealer.hand]:
+                for card in hand.cards: player.addToCount(COUNT_BY_CARD[card.face_value])
         dealer.settlePlayer(player, verbose, outputFile)
 

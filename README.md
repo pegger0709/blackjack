@@ -9,7 +9,7 @@ git clone https://github.com/pegger0709/blackjack.git
 If you want to play the game of blackjack as if you were in a casino, run
 
 ```
-python .\play.py \
+python .\src\play.py \
 --bankroll <initial_bankroll_of_player> \
 --decks <number_of_decks_in_shoe> \
 --shuffle <number_of_cards_to_leave_in_shoe>
@@ -18,7 +18,7 @@ python .\play.py \
 If you want to run a Monte Carlo simulation of blackjack, run
 
 ```
-python .\simulate.py \
+python .\src\simulate.py \
 --bankroll <initial_bankroll_of_player> \
 --decks <number_of_decks_in_shoe> \
 --shuffle <number_of_cards_to_leave_in_shoe> \
@@ -30,16 +30,16 @@ If you want to increase bets when the count is favorable, include the flag `--co
 
 If you want to compare the basic strategy runs with the card counting runs, run
 ```
-python .\measure_profitability.py \
+python .\src\measure_profitability.py \
 --bankroll <initial_bankroll_of_player> \
 --bet <amount_to_bet_on_each_hand>
 ```
 
 As an example, you could run 
 ```
-python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256
-python .\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256 --count
-python .\measure_profitablity.py --bankroll 100 --bet 1 
+python .\src\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256
+python .\src\simulate.py --bankroll 100 --decks 6 --shuffle 200 --bet 1 --runs 1024 --hands 256 --count
+python .\src\measure_profitablity.py --bankroll 100 --bet 1 
 ```
 
 ## A refresher course on the game
