@@ -41,4 +41,7 @@ if __name__ == "__main__":
             for hand in player.hands+[dealer.hand]:
                 for card in hand.cards: player.addToCount(COUNT_BY_CARD[card.face_value])
         dealer.settlePlayer(player, verbose, outputFile)
+        if shoe.timeToShuffle():
+            shoe.shuffleShoe()
+            player.resetCount()
 
