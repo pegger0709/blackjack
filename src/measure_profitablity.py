@@ -13,7 +13,7 @@ def buildArgsParser():
 if __name__ == "__main__":
     parser = buildArgsParser()
     args = parser.parse_args()
-    pnl_basicstrategy = pd.read_csv("../data/MC_runs.csv").fillna(0) - args.initial_bankroll
+    pnl_basicstrategy = pd.read_csv("data/MC_runs.csv").fillna(0) - args.initial_bankroll
     num_hands = pnl_basicstrategy.shape[0]
     total_number_of_runs = pnl_basicstrategy.shape[1]
     bankrupting_runs = (pnl_basicstrategy.iloc[-1] == -args.initial_bankroll).sum()
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     losing_runs = (np.logical_and(pnl_basicstrategy.iloc[-1] < 0., pnl_basicstrategy.iloc[-1] > -args.initial_bankroll)).sum()
     message = f"We ran {total_number_of_runs} runs of {num_hands} hands each, using the basic strategy. Of these, {bankrupting_runs} went bankrupt, {losing_runs} lost money, and {profitable_runs} were profitable.\nOn these runs, the average profit was {pnl_basicstrategy.iloc[-1].mean()/(num_hands*args.bet_per_hand)*100} percent of each hand; the maximal profit was {pnl_basicstrategy.iloc[-1].max()/(num_hands*args.bet_per_hand)*100} percent"
     print(message)
-    pnl_cardcount = pd.read_csv("../data/MC_runs_counting_cards.csv").fillna(0) - args.initial_bankroll
+    pnl_cardcount = pd.read_csv("data/MC_runs_counting_cards.csv").fillna(0) - args.initial_bankroll
     num_hands = pnl_cardcount.shape[0]
     total_number_of_runs = pnl_cardcount.shape[1]
     bankrupting_runs = (pnl_cardcount.iloc[-1] == -args.initial_bankroll).sum()

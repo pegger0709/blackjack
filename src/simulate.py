@@ -57,7 +57,7 @@ def runSimulation():
             else:
                 break
 
-    filename = '../data/MC_runs_counting_cards' if args.count_cards else '../data/MC_runs'
+    filename = 'data/MC_runs_counting_cards' if args.count_cards else 'data/MC_runs'
     df.to_csv(filename+'.csv', index=False)
     plot(df.fillna(0), args.initial_bankroll, args.bet_per_hand, args.n_hands_per_run)
     plt.savefig(filename+'.png')
